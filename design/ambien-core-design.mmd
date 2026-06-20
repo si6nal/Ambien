@@ -1,0 +1,60 @@
+---
+config:
+  theme: dark
+---
+
+flowchart LR
+    id["ambien-core flow"]
+
+    ambienCore --> initialize
+    initialize["Initialize<br>(create required objects, etc.)"] --> loadSettings["Load settings using GSON & validate settings"]
+    loadSettings --> ambienSettings
+
+    loadSettings --> validateSettings{"Does the input file exist?"}
+    validateSettings -->|Yes| parseInput["Continue (parse input file)"]
+    validateSettings -->|No| settingsError["Return settings input error"]
+
+    parseInput --> checkOutput{"Does the output file already exist?"}
+
+    checkOutput -->|Yes| outputFileError["Return output file type error"]
+    checkOutput -->|No| validInputFiles{"Is the input file is a valid .class or .jar file?"}
+
+    validInputFiles -->|Yes| initializeTransformers["Initialize transformer manager (pass file & settings)"]
+    validInputFiles -->|No| inputFileError["Return input file type error"]
+
+    initializeTransformers --> ambienTransformerManager
+    initializeTransformers --> runTransformers["run(): Create a list of transformers that are enabled (in settings) & work for the file type, then run them."]
+    runTransformers --> ambienTransformer
+    runTransformers --> transformerFlow["Each transformer has access to the whole jar/class"]
+    runTransformers --> transformOut["run() in transformer manager returns a new class or jar file"]
+    transformOut --> writeNewFile["Write file returned by transformer manager to the output file path (in the core initialize/run method)"]
+    writeNewFile --> success["Return success"]
+
+subgraph ambienCore["AmbienCore class"]
+    ambienCoreInitialize["`
+    initialize(Settings settings) -> AmbienError
+    initialize(String settingsFile) -> AmbienError
+    `"]
+end
+
+subgraph ambienSettings["AmbienSettings class"]
+    ambienSettingsVariables["`
+    String inputFilePath
+    String outputFilePath
+    List<Transformer> transformerSettings
+    `"]
+end
+
+subgraph ambienTransformerManager["AmbienTransformerManager class"]
+    ambienTransformerManagerFns["`
+    constructor(Settings settings)
+    run() -> JarFile/ClassFile
+    `"]
+end
+
+subgraph ambienTransformer["AmbienTransformer class"]
+    ambienTransformerFns["`
+    transform(JarFile) -> Jarfile - calls transform(ClassFile) for each class in the JarFile
+    transform(ClassFile) -> ClassFile
+    `"]
+end

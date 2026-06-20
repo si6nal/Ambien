@@ -1,2 +1,2 @@
 # Ambien
-A modern work in progress rewrite.
+A work in progress rewrite, for progress you can check the design files.
