@@ -38,6 +38,7 @@
 - [ ] Supported files array 
     - JAR_FILES for transformers that require a .jar input file
     - CLASS_FILES for transformers that only require a class file as input
+- [ ] Enabled by default & always enabled
 
 ##### Shrink transformers
 - [ ] Hardcoded password & api key check
@@ -46,7 +47,13 @@
 
 ##### Obfuscation transformers
 - [ ] String encryption
-    - [ ] Strength/Mode option
+    - [ ] Strength/Encryption algorithm option
+    - [ ] Decryption time
+        - When the decryption will occur.
+        - [ ] Class initialization 
+            - Decrypts string during class initialization & stores in an array.
+        - [ ] During execution
+            - Regular string encryption, decrypts strings when needed.
 - [ ] Operator replacer
     - Replaces operators with `x` different operators to produce the same output
     - [ ] Number of replacement operators
@@ -56,10 +63,17 @@
         - Example: `2+2` would become `12 % 8`
 - [ ] Class encryption
     - Encrypts classes & adds a custom class loader that decrypts them at runtime.
+- [ ] Watermark
+    - Adds obfuscation watermark to exported file, always enabled.
 
 ##### Miscellaneous
 - [ ] Ability to write custom transformers using JavaScript
     - This feature may be scrapped.
+
+## Dependencies
+- [lombok](https://projectlombok.org/)
+- [gson](https://github.com/google/gson)
+- [asm](https://asm.ow2.io/)
 
 ## Design
 The current design can be viewed [here](ambien-core-design.mmd). If you don't know how to view `.mmd` (Mermaid) files check the [design readme](README.md).
